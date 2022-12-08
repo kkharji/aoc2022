@@ -17,18 +17,18 @@ pub trait GetInput {
 
 /// Aoc Challenge interface
 pub trait Solve: GetInput {
-    fn part1() -> Output {
+    fn part1(_data: Option<Self::Input>) -> Output {
         "`Part 1 is not yet implemented`".into()
     }
 
-    fn part2() -> Output {
+    fn part2(_data: Option<Self::Input>) -> Output {
         "`Part 2 is not yet implemented`".into()
     }
 
     fn solve(part: Part) -> Output {
         match part {
-            Part::One => Self::part1(),
-            Part::Two => Self::part2(),
+            Part::One => Self::part1(None),
+            Part::Two => Self::part2(None),
         }
     }
 }

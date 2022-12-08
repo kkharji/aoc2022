@@ -12,10 +12,11 @@ struct Args {
 fn main() {
     let day = Args::parse().day;
 
-    let (one, two) = match day {
-        1 => (Day01::part1(), Day01::part2()),
+    let solve = match day {
+        1 => Day01::solve,
         _ => panic!("There's no day {} ", day),
     };
+    let (one, two) = (solve(Part::One), solve(Part::Two));
 
     println!("************************************************************");
     println!("* Advent of Code: 2022");

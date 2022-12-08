@@ -5,11 +5,12 @@ mod input;
 
 pub struct Day01;
 
+type Case = Day01;
 type Input = Vec<Vec<i32>>;
 
-impl Solve for Day01 {
-    fn part1() -> crate::Output {
-        Day01::data()
+impl Solve for Case {
+    fn part1(data: Option<Self::Input>) -> crate::Output {
+        data.unwrap_or_else(Self::data)
             .into_iter()
             .map(|cals| cals.into_iter().sum::<i32>())
             .max()
@@ -24,18 +25,18 @@ mod tests {
 
     #[test]
     fn check_example() {
-        let result = Day01::example().iter().map(|cals| cals.iter().sum()).max();
-        assert_eq!(result, Some(24000));
+        let part1 = Case::part1(Case::example().into());
+        assert_eq!(part1, 24000);
     }
 
     #[test]
     fn check_part1() {
-        let result = Day01::part1();
+        let result = Case::part1(None);
         assert_eq!(result, 70296)
     }
 
     #[test]
     fn check_part2() {
-        let _result = Day01::part1();
+        let _result = Case::part2(None);
     }
 }
