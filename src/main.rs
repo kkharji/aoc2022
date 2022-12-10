@@ -14,6 +14,7 @@ fn main() {
 
     let solve = match day {
         1 => Day01::solve,
+        2 => Day02::solve,
         _ => panic!("There's no day {} ", day),
     };
     let (one, two) = (solve(Part::One), solve(Part::Two));
