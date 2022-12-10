@@ -1,9 +1,6 @@
-use itertools::Itertools;
-
-use crate::util::GetInput;
-use crate::Solve;
-
 mod input;
+use crate::{GetInput, Solve};
+use itertools::Itertools;
 
 struct Case;
 

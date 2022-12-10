@@ -6,6 +6,8 @@ use crate::GetInput;
 impl GetInput for Case {
     type Input = Vec<(char, char)>;
 
+    const NAME: &'static str = "day02";
+
     fn text_to_input(content: &str) -> Self::Input {
         content
             .split("\n")
@@ -18,14 +20,6 @@ impl GetInput for Case {
                 Some((chars.pop_front()?, chars.pop_back()?))
             })
             .collect()
-    }
-
-    fn data() -> Self::Input {
-        Self::text_to_input(include_str!("./data.txt"))
-    }
-
-    fn example() -> Self::Input {
-        Self::text_to_input(include_str!("./example.txt"))
     }
 }
 

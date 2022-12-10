@@ -1,7 +1,5 @@
 mod input;
-
-use crate::util::GetInput;
-use crate::Solve;
+use crate::{GetInput, Solve};
 
 pub struct Case;
 

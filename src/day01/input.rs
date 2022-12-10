@@ -4,6 +4,8 @@ use crate::GetInput;
 impl GetInput for Case {
     type Input = Vec<Vec<i32>>;
 
+    const NAME: &'static str = "day01";
+
     fn text_to_input(content: &str) -> Self::Input {
         let mut elfs: Self::Input = vec![];
         let mut lines = content.split("\n");
@@ -22,14 +24,6 @@ impl GetInput for Case {
             }
         }
         elfs
-    }
-
-    fn data() -> Self::Input {
-        Self::text_to_input(include_str!("./data.txt"))
-    }
-
-    fn example() -> Self::Input {
-        Self::text_to_input(include_str!("./example.txt"))
     }
 }
 
