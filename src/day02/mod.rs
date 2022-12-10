@@ -15,7 +15,7 @@ impl Case {
             'A' => 1,
             'B' => 2,
             'C' => 3,
-            _ => unreachable!("expected A,B or C"),
+            _ => unreachable!("expected A, B or C"),
         }
     }
 
@@ -33,6 +33,25 @@ impl Case {
             !lhs
         } else {
             lhs
+        }
+    }
+
+    fn predict_next_move(a: char, b: char) -> char {
+        match b {
+            'X' => match a {
+                'A' => 'C',
+                'B' => 'A',
+                'C' => 'B',
+                _ => unreachable!("expected A, B or C"),
+            },
+            'Z' => match a {
+                'A' => 'B',
+                'B' => 'C',
+                'C' => 'A',
+                _ => unreachable!("expected A, B or C"),
+            },
+            'Y' => a,
+            l => unreachable!("expect x or y or z, got {l}"),
         }
     }
 }
@@ -54,6 +73,22 @@ impl Solve for Case {
             .sum::<u16>()
             .into()
     }
+
+    fn part2(data: Option<Self::Input>) -> crate::Output {
+        data.unwrap_or_else(Self::data)
+            .into_iter()
+            .map(|(a, b)| {
+                let bval = Self::get_val(Self::predict_next_move(a, b));
+                match b {
+                    'X' => bval + 0,
+                    'Y' => bval + 3,
+                    'Z' => bval + 6,
+                    l => unreachable!("expect x or y or z, got {l}"),
+                }
+            })
+            .sum::<u16>()
+            .into()
+    }
 }
 
 #[cfg(test)]
@@ -64,6 +99,8 @@ mod tests {
     fn check_example() {
         let part1 = Case::part1(Case::example().into());
         assert_eq!(part1, 15);
+        let part2 = Case::part2(Case::example().into());
+        assert_eq!(part2, 12);
     }
 
     #[test]
@@ -73,7 +110,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "not-implemented"]
     fn check_part2() {
         let result = Case::part2(None);
         assert_eq!(result, 00000)
