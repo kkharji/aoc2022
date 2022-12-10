@@ -5,10 +5,7 @@ use crate::Solve;
 
 mod input;
 
-pub struct Day01;
-
-type Case = Day01;
-type Input = Vec<Vec<i32>>;
+struct Case;
 
 impl Solve for Case {
     fn part1(data: Option<Self::Input>) -> crate::Output {
@@ -36,22 +33,21 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_example() {
-        let part1 = Case::part1(Case::example().into());
-        assert_eq!(part1, 24000);
-        let part1 = Case::part2(Case::example().into());
-        assert_eq!(part1, 45000);
+    fn check_example_part1() {
+        assert_eq!(Case::part1(Case::example().into()), 24000);
+    }
+    #[test]
+    fn check_example_part2() {
+        assert_eq!(Case::part2(Case::example().into()), 45000);
     }
 
     #[test]
     fn check_part1() {
-        let result = Case::part1(None);
-        assert_eq!(result, 70296)
+        assert_eq!(Case::part1(None), 70296)
     }
 
     #[test]
     fn check_part2() {
-        let result = Case::part2(None);
-        assert_eq!(result, 205381)
+        assert_eq!(Case::part2(None), 205381)
     }
 }

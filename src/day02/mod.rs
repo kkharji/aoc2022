@@ -1,12 +1,9 @@
+mod input;
+
 use crate::util::GetInput;
 use crate::Solve;
 
-mod input;
-
-pub struct Day02;
-type Case = Day02;
-
-type Input = Vec<(char, char)>;
+pub struct Case;
 
 // A/Rock = 1, B/Paper = 2, C/Scissors = 3,, Win = 6, Draw = 3, lost
 impl Case {
@@ -96,22 +93,22 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_example() {
-        let part1 = Case::part1(Case::example().into());
-        assert_eq!(part1, 15);
-        let part2 = Case::part2(Case::example().into());
-        assert_eq!(part2, 12);
+    fn check_example_part1() {
+        assert_eq!(Case::part1(Case::example().into()), 15);
+    }
+
+    #[test]
+    fn check_example_part2() {
+        assert_eq!(Case::part2(Case::example().into()), 12);
     }
 
     #[test]
     fn check_part1() {
-        let result = Case::part1(None);
-        assert_eq!(result, 11767)
+        assert_eq!(Case::part1(None), 11767)
     }
 
     #[test]
     fn check_part2() {
-        let result = Case::part2(None);
-        assert_eq!(result, 00000)
+        assert_eq!(Case::part2(None), 13886)
     }
 }

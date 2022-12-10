@@ -4,7 +4,7 @@ use super::Case;
 use crate::GetInput;
 
 impl GetInput for Case {
-    type Input = super::Input;
+    type Input = Vec<(char, char)>;
 
     fn text_to_input(content: &str) -> Self::Input {
         content

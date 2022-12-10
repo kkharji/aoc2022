@@ -1,8 +1,8 @@
-use super::Day01;
+use super::Case;
 use crate::GetInput;
 
-impl GetInput for Day01 {
-    type Input = super::Input;
+impl GetInput for Case {
+    type Input = Vec<Vec<i32>>;
 
     fn text_to_input(content: &str) -> Self::Input {
         let mut elfs: Self::Input = vec![];
@@ -35,7 +35,7 @@ impl GetInput for Day01 {
 
 #[test]
 fn test_parse_example() {
-    let output = Day01::example();
+    let output = Case::example();
     println!("{output:#?}");
     assert_eq!(output[1], vec![4000])
 }
