@@ -1,5 +1,7 @@
 use std::fmt;
 
+include!(concat!(env!("OUT_DIR"), "/codegen.rs"));
+
 pub enum Part {
     One,
     Two,
@@ -13,11 +15,11 @@ pub trait GetInput {
     fn text_to_input(content: &str) -> Self::Input;
 
     fn data() -> Self::Input {
-        Self::text_to_input(&read_input("data", Self::NAME))
+        Self::text_to_input(AOC_DATA.get(Self::NAME).expect("No data found"))
     }
 
     fn example() -> Self::Input {
-        Self::text_to_input(&read_input("examples", Self::NAME))
+        Self::text_to_input(AOC_EXAMPLES.get(Self::NAME).expect("No example found"))
     }
 }
 
@@ -87,14 +89,6 @@ impl<T: fmt::Display> PartialEq<T> for Output {
     fn eq(&self, other: &T) -> bool {
         *self.to_string() == other.to_string()
     }
-}
-
-fn read_input(kind: &str, name: &str) -> String {
-    std::fs::read_to_string(format!(
-        "{}/input/{kind}/{name}.txt",
-        std::env!("CARGO_MANIFEST_DIR"),
-    ))
-    .expect("Read data file")
 }
 
 mod day01;
