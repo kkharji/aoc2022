@@ -1,9 +1,7 @@
-use std::ops::Div;
-
 use super::{Case, GetInput};
 
 impl GetInput for Case {
-    type Input = Vec<(Vec<char>, Vec<char>)>;
+    type Input = Vec<Vec<char>>;
 
     const NAME: &'static str = "day03";
 
@@ -11,8 +9,7 @@ impl GetInput for Case {
         content
             .split("\n")
             .filter(|line| !line.is_empty())
-            .map(|line| line.split_at(line.len().div(2)))
-            .map(|(a, b)| (a.chars().collect(), b.chars().collect()))
+            .map(|a| a.chars().collect())
             .collect()
     }
 }
@@ -21,14 +18,14 @@ impl GetInput for Case {
 fn test_parse_example() {
     let output = Case::example();
     let expected = [
-        ("vJrwpWtwJgWr", "hcsFMMfFFhFp"),
-        ("jqHRNqRjqzjGDLGL", "rsFMfFZSrLrFZsSL"),
-        ("PmmdzqPrV", "vPwwTWBwg"),
-        ("wMqvLMZHhHMvwLH", "jbvcjnnSBnvTQFn"),
-        ("ttgJtRGJ", "QctTZtZT"),
-        ("CrZsJsPPZsGz", "wwsLwLmpwMDw"),
+        "vJrwpWtwJgWrhcsFMMfFFhFp",
+        "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+        "PmmdzqPrVvPwwTWBwg",
+        "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+        "ttgJtRGJQctTZtZT",
+        "CrZsJsPPZsGzwwsLwLmpwMDw",
     ]
-    .map(|(a, b)| (a.chars().collect(), b.chars().collect()))
+    .map(|a| a.chars().collect::<Vec<_>>())
     .to_vec();
     assert_eq!(output, expected)
 }

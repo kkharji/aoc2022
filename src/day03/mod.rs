@@ -1,5 +1,7 @@
 mod input;
 
+use std::ops::Div;
+
 use crate::{GetInput, Solve};
 use itertools::Itertools;
 
@@ -12,24 +14,34 @@ impl Case {
         let ascii_code = char as u32;
         ascii_code - ascii_start + value_start
     }
-
-    fn find_common<T: std::cmp::PartialEq>((a, b): (Vec<T>, Vec<T>)) -> Option<T> {
-        b.into_iter().find_or_first(|bchar| a.contains(&bchar))
-    }
 }
 
 impl Solve for Case {
     fn part1(data: Option<Self::Input>) -> crate::Output {
         data.unwrap_or_else(Self::data)
             .into_iter()
-            .flat_map(Self::find_common)
+            .map(|chars| {
+                let (a, b) = chars.split_at(chars.len().div(2));
+                (a.to_vec(), b.to_vec())
+            })
+            .flat_map(|(a, b)| b.into_iter().find_or_first(|bchar| a.contains(&bchar)))
             .map(Self::get_char_score)
             .sum::<u32>()
             .into()
     }
 
-    fn part2(_data: Option<Self::Input>) -> crate::Output {
-        "`Part 2 is not yet implemented`".into()
+    fn part2(data: Option<Self::Input>) -> crate::Output {
+        data.unwrap_or_else(Self::data)
+            .chunks(3)
+            .flat_map(|group| {
+                let [a, b, c] = &group else { return  None; };
+                a.into_iter()
+                    .find_or_first(|char| b.contains(char) && c.contains(char))
+                    .map(ToOwned::to_owned)
+            })
+            .map(Self::get_char_score)
+            .sum::<u32>()
+            .into()
     }
 }
 
@@ -43,9 +55,8 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "no-implemented"]
     fn check_example_part2() {
-        assert_eq!(Case::part2(Case::example().into()), 24000);
+        assert_eq!(Case::part2(Case::example().into()), 70);
     }
 
     #[test]
@@ -54,8 +65,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "no-implemented"]
     fn check_part2() {
-        assert_eq!(Case::part2(None), 205381)
+        assert_eq!(Case::part2(None), 2609)
     }
 }
