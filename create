@@ -1,0 +1,89 @@
+#!/bin/bash
+day=$1
+dayName="day$1"
+
+[[ "${#day}" == 0 ]] && echo "No challenge day number given!" && exit 1;
+[[ "${#day}" == 1 ]] && dayName="day0$1";
+[[ -d "./src/${dayName}" ]] && echo "Challenge day already exists!" && exit 1;
+
+set +e
+IFS='' read -r -d '' module_file <<EOF
+mod input;
+
+use crate::{GetInput, Solve};
+
+struct Case;
+
+impl Solve for Case {
+
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[ignore = "no-implemented"]
+    fn check_example_part1() {
+        assert_eq!(Case::part1(Case::example().into()), 24000);
+    }
+
+    #[test]
+    #[ignore = "no-implemented"]
+    fn check_example_part2() {
+        assert_eq!(Case::part2(Case::example().into()), 24000);
+    }
+
+    #[test]
+    #[ignore = "no-implemented"]
+    fn check_part1() {
+        assert_eq!(Case::part1(None), 70296)
+    }
+
+    #[test]
+    #[ignore = "no-implemented"]
+    fn check_part2() {
+        assert_eq!(Case::part2(None), 205381)
+    }
+}
+EOF
+set -e
+
+set +e
+IFS='' read -r -d '' input_file <<EOF
+use super::{Case, GetInput};
+
+impl GetInput for Case {
+    type Input = ();
+
+    const NAME: &'static str = "$dayName";
+
+    fn text_to_input(content: &str) -> Self::Input {
+      ()
+    }
+}
+
+#[test]
+fn test_parse_example() {
+    let output = Case::example();
+    println!("{output:#?}");
+    assert_eq!(output, ())
+}
+EOF
+set -e
+
+mkdir -p ./src/${dayName};
+printf "%s\n" "$module_file" > ./src/$dayName/mod.rs
+printf "%s\n" "$input_file" > ./src/$dayName/input.rs
+
+open "https://adventofcode.com/2022/day/$day" &
+
+touch ./input/{data,examples}/${dayName}.txt
+
+echo "mod $dayName;" >> ./src/lib.rs
+
+nvim \
+  ./src/${dayName}/mod.rs \
+  ./src/${dayName}/input.rs \
+  ./input/data/${dayName}.txt \
+  ./input/examples/${dayName}.txt
