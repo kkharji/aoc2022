@@ -3,7 +3,7 @@ use std::ops::Div;
 use super::{Case, GetInput};
 
 impl GetInput for Case {
-    type Input = Vec<(String, String)>;
+    type Input = Vec<(Vec<char>, Vec<char>)>;
 
     const NAME: &'static str = "day03";
 
@@ -12,7 +12,7 @@ impl GetInput for Case {
             .split("\n")
             .filter(|line| !line.is_empty())
             .map(|line| line.split_at(line.len().div(2)))
-            .map(|(a, b)| (a.to_string(), b.to_string()))
+            .map(|(a, b)| (a.chars().collect(), b.chars().collect()))
             .collect()
     }
 }
@@ -28,7 +28,7 @@ fn test_parse_example() {
         ("ttgJtRGJ", "QctTZtZT"),
         ("CrZsJsPPZsGz", "wwsLwLmpwMDw"),
     ]
-    .map(|(a, b)| (a.to_string(), b.to_string()))
+    .map(|(a, b)| (a.chars().collect(), b.chars().collect()))
     .to_vec();
     assert_eq!(output, expected)
 }
