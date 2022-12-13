@@ -30,14 +30,14 @@ mod tests {
 
     #[test]
     #[ignore = "no-implemented"]
-    fn check_example_part2() {
-        assert_eq!(Case::part2(Case::example().into()), 24000);
+    fn check_part1() {
+        assert_eq!(Case::part1(None), 70296)
     }
 
     #[test]
     #[ignore = "no-implemented"]
-    fn check_part1() {
-        assert_eq!(Case::part1(None), 70296)
+    fn check_example_part2() {
+        assert_eq!(Case::part2(Case::example().into()), 24000);
     }
 
     #[test]

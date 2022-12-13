@@ -58,6 +58,8 @@ impl_output_from! {
     [ I32,    i32 ],
     [ I64,    i64 ],
     [ I128,   i128 ],
+    [ U,      usize],
+    [ I,      isize],
     [ String, String ]
 }
 
@@ -81,6 +83,8 @@ impl fmt::Display for Output {
             Output::I64(v) => write!(f, "{v}"),
             Output::I128(v) => write!(f, "{v}"),
             Output::String(v) => write!(f, "{v}"),
+            Output::U(v) => write!(f, "{v}"),
+            Output::I(v) => write!(f, "{v}"),
         }
     }
 }
