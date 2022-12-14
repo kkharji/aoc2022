@@ -7,6 +7,16 @@ pub struct Input {
     pub stacks: Vec<Vec<char>>,
 }
 
+impl Input {
+    pub fn join_stacks_last_items<T: From<String>>(&self) -> T {
+        self.stacks
+            .iter()
+            .flat_map(|s| s.last())
+            .collect::<String>()
+            .into()
+    }
+}
+
 impl GetInput for Case {
     type Input = Input;
 
