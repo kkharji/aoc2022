@@ -77,6 +77,7 @@ printf "%s\n" "$module_file" > ./src/$dayName/mod.rs
 printf "%s\n" "$input_file" > ./src/$dayName/input.rs
 
 open "https://adventofcode.com/2022/day/$day" &
+open "https://adventofcode.com/2022/day/$day/input" &
 
 touch ./input/{data,examples}/${dayName}.txt
 
