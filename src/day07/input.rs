@@ -13,24 +13,23 @@ pub enum Entry {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct File {
-    name: String,
-    size: usize,
+    pub name: String,
+    pub size: usize,
 }
 
 #[derive(Default)]
 pub struct Directory {
-    _name: String,
-    parent: Option<Ref<Directory>>,
-    childern: HashMap<String, Entry>,
+    pub _name: String,
+    pub parent: Option<Ref<Directory>>,
+    pub childern: HashMap<String, Entry>,
 }
 
 impl Directory {
-    #[allow(dead_code)]
-    pub fn sum(&self) -> usize {
+    pub fn size(&self) -> usize {
         self.childern
             .iter()
             .map(|(_, entry)| match entry {
-                Entry::Dir(dir) => dir.borrow().sum(),
+                Entry::Dir(dir) => dir.borrow().size(),
                 Entry::File(File { size, .. }) => size.to_owned(),
             })
             .sum()
@@ -101,7 +100,7 @@ fn test_parse_example() {
         .sorted()
         .collect_vec();
     assert_eq!(childern, vec!["a", "b.txt", "c.dat", "d"]);
-    let sum = root.sum();
+    let sum = root.size();
 
     assert_eq!(sum, 48381165);
 }
