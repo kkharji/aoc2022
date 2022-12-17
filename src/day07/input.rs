@@ -11,32 +11,17 @@ pub enum Entry {
     File(File),
 }
 
-#[derive(PartialEq, Eq, Clone, Debug)]
+#[derive(PartialEq, Eq, Clone)]
 pub struct File {
-    pub name: String,
     pub size: usize,
 }
 
 #[derive(Default)]
 pub struct Directory {
-    pub _name: String,
     pub parent: Option<Ref<Directory>>,
-    pub childern: HashMap<String, Entry>,
+    pub children: HashMap<String, Entry>,
 }
 
-impl Directory {
-    pub fn size(&self) -> usize {
-        self.childern
-            .iter()
-            .map(|(_, entry)| match entry {
-                Entry::Dir(dir) => dir.borrow().size(),
-                Entry::File(File { size, .. }) => size.to_owned(),
-            })
-            .sum()
-    }
-}
-
-//
 impl GetInput for Case {
     type Input = Ref<Directory>;
 
@@ -46,46 +31,126 @@ impl GetInput for Case {
         let root: Ref<Directory> = Default::default();
         let mut cwd = Rc::clone(&root);
 
-        content.lines().map(|l| l.split_whitespace().collect_vec()).for_each(|words| {
-            match (words[0], words[1]) {
-                ("$", "ls") => {}
-                ("$", "cd") => match words[2]  {
-                    "/" =>  cwd = root.clone(),
-                    ".." =>   {
-                        let Some(parent) = cwd.borrow().parent.as_ref().map(Rc::clone) else { unreachable!() };
-                        cwd = parent.clone();
-                    },
-
-                    name =>  {
-                        let cwd_borrow = cwd.borrow();
-                        let newcwd = cwd_borrow.childern.get(name).map(|v| {
-                            if let Entry::Dir(newcwd) = v { newcwd.clone() } else { unreachable!() }
-                        }).expect("Cd into non-existing direcory");
-                        drop(cwd_borrow);
-
-                        cwd = newcwd;
-                    }
+        content
+            .lines()
+            .map(|l| l.split_whitespace().collect_vec())
+            .for_each(|words| match (words[0], words[1], words.get(2)) {
+                ("$", "cd", Some(&"/")) => {
+                    cwd = root.clone();
                 }
-                ("dir", name) => cwd.borrow_mut().childern.insert(name.into(), Entry::Dir(Directory {
-                        _name: name.into(),
-                        parent: Some(cwd.clone()),
-                        childern: Default::default(),
-                    }
-                    .pipe(RefCell::new)
-                    .pipe(Rc::new)))
+                ("$", "cd", Some(&"..")) => {
+                    let dir = cwd.borrow().clone_parent().unwrap();
+                    cwd = dir;
+                }
+                ("$", "cd", Some(name)) => {
+                    let dir = cwd
+                        .borrow()
+                        .children
+                        .get(*name)
+                        .and_then(Entry::to_dir)
+                        .expect("Cd into non-existing direcory");
+
+                    cwd = dir;
+                }
+                ("$", "ls", _) => {}
+                ("dir", name, _) => cwd
+                    .borrow_mut()
+                    .children
+                    .insert(name.into(), Entry::new_dir(&cwd))
                     .pipe(|_| ()),
 
-                (size, name) => {
-                    let file = File {
-                        name: name.into(),
-                        size: size.parse().expect("Failed to parse size"),
-                    };
-                    cwd.borrow_mut().childern.insert(name.into(), Entry::File(file));
-                }
-            }
-        });
+                (size, name, _) => cwd
+                    .borrow_mut()
+                    .children
+                    .insert(name.into(), Entry::new_file(size))
+                    .pipe(|_| ()),
+            });
 
         root
+    }
+}
+
+impl Entry {
+    fn new_dir(cwd: &Rc<RefCell<Directory>>) -> Entry {
+        Entry::Dir(
+            Directory {
+                parent: Some(cwd.clone()),
+                children: Default::default(),
+            }
+            .pipe(RefCell::new)
+            .pipe(Rc::new),
+        )
+    }
+    fn new_file(size: &str) -> Entry {
+        Entry::File(File {
+            size: size.parse().expect("Failed to parse size"),
+        })
+    }
+
+    pub fn to_dir(&self) -> Option<Ref<Directory>> {
+        if let Self::Dir(v) = self {
+            Some(v.clone())
+        } else {
+            None
+        }
+    }
+}
+
+impl Directory {
+    pub fn size(&self) -> usize {
+        self.children
+            .iter()
+            .map(|(_, entry)| match entry {
+                Entry::Dir(dir) => dir.borrow().size(),
+                Entry::File(File { size, .. }) => size.to_owned(),
+            })
+            .sum()
+    }
+
+    pub fn clone_parent(&self) -> Option<Ref<Directory>> {
+        self.parent.as_ref().map(Clone::clone)
+    }
+}
+
+impl std::fmt::Debug for Entry {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Dir(value) => value.clone().take().fmt(f),
+            Self::File(value) => value.fmt(f),
+        }
+    }
+}
+
+impl std::fmt::Debug for File {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.size.pretty_fmt())
+    }
+}
+
+impl std::fmt::Debug for Directory {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Directory")
+            .field("children", &self.children)
+            .finish()
+    }
+}
+
+pub trait PrettyFormat<T> {
+    fn pretty_fmt(&self) -> String;
+}
+
+impl PrettyFormat<usize> for usize {
+    fn pretty_fmt(&self) -> String {
+        let mut s = String::new();
+        let i_str = self.to_string();
+        let a = i_str.chars().rev().enumerate();
+        for (idx, val) in a {
+            if idx != 0 && idx % 3 == 0 {
+                s.insert(0, ',');
+            }
+            s.insert(0, val);
+        }
+        s
     }
 }
 
@@ -93,13 +158,13 @@ impl GetInput for Case {
 fn test_parse_example() {
     let output = Case::example();
     let root = output.borrow();
-    let childern = root
-        .childern
+    let children = root
+        .children
         .iter()
         .map(|(name, _)| name)
         .sorted()
         .collect_vec();
-    assert_eq!(childern, vec!["a", "b.txt", "c.dat", "d"]);
+    assert_eq!(children, vec!["a", "b.txt", "c.dat", "d"]);
     let sum = root.size();
 
     assert_eq!(sum, 48381165);
