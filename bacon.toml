@@ -1,0 +1,17 @@
+default_job = "test"
+
+[jobs]
+
+[jobs.clippy]
+command = ["cargo", "clippy", "--color", "always"]
+need_stdout = false
+
+[jobs.test]
+command = ["cargo", "test", "--color", "always"]
+need_stdout = true
+watch = ["tests"]
+
+[keybindings]
+i = "job:initial"
+c = "job:clippy"
+t = "job:test"
