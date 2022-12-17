@@ -2,6 +2,7 @@ mod input;
 
 use std::collections::HashSet;
 
+use itertools::fold;
 use tap::Pipe;
 
 use crate::{GetInput, Solve};
@@ -57,6 +58,48 @@ impl Solve for Case {
             .len()
             .into()
     }
+
+    fn part2(data: Option<Self::Input>) -> crate::Output {
+        let Input { grid, dim: (h, w) } = data.unwrap_or_else(Self::data);
+        let steps = [U, D, L, R];
+
+        (1..h - 1)
+            .into_iter()
+            .flat_map(|r| {
+                (1..w - 1)
+                    .map({
+                        |c| {
+                            steps.map(|step| {
+                                ((r + step.0, c + step.1), step, grid[r as usize][c as usize])
+                            })
+                        }
+                    })
+                    .map({
+                        |iterator| {
+                            fold(iterator, 1, |score, ((mut row, mut col), step, height)| {
+                                let mut count = 0;
+
+                                while (row >= 0 && col >= 0) && (row < h && col < w) {
+                                    count += 1;
+
+                                    if grid[row as usize][col as usize] >= height {
+                                        break;
+                                    }
+
+                                    row += step.0;
+                                    col += step.1
+                                }
+
+                                score * count
+                            })
+                        }
+                    })
+                    .max()
+            })
+            .max()
+            .unwrap_or_default()
+            .into()
+    }
 }
 
 #[cfg(test)]
@@ -74,14 +117,14 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "no-implemented"]
     fn check_example_part2() {
-        assert_eq!(Case::part2(Case::example().into()), 24000);
+        assert_eq!(Case::part2(Case::example().into()), 8);
     }
 
     #[test]
-    #[ignore = "no-implemented"]
     fn check_part2() {
-        assert_eq!(Case::part2(None), 205381)
+        assert_eq!(Case::part2(None), 180000)
     }
 }
+
+
