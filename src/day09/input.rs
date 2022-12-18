@@ -3,7 +3,7 @@ use itertools::Itertools;
 use std::str::FromStr;
 use strum::EnumString;
 
-pub type Int = isize;
+pub type Int = i16;
 
 #[derive(EnumString, PartialEq, Debug, Clone, Copy)]
 pub enum Direction {
